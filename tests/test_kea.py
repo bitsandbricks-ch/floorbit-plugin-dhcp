@@ -68,6 +68,7 @@ def test_subnets_on_the_health_wall(make, kea):
     assert players["name"] == "DHCP Players A 192.0.2.0/24" and players["kind"] == "dhcp"
     assert players["status"] == "warn" and players["summary"] == "38 of 200 addresses free"
     assert {m["label"]: m["value"] for m in players["metrics"]} == {"Free": 38, "In use": 81, "Declined": 12}
+    assert players["capacity"] == {"used": 162, "total": 200}
     assert checks["dhcp:subnet-2"]["status"] == "up" and checks["dhcp:subnet-2"]["name"] == "DHCP 198.51.100.0/24"
     assert checks["dhcp:subnet-3"]["status"] == "down" and checks["dhcp:subnet-3"]["name"] == "DHCP crew 203.0.113.0/26"
     server = checks["dhcp:server"]

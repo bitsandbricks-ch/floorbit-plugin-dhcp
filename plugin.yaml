@@ -3,7 +3,7 @@
 id: dhcp
 name: DHCP (Kea)
 icon: vlan
-version: "1.0.0"
+version: "1.1.0"
 floorbit: ">=0.1,<2"
 description: "The event's Kea DHCP server on the health wall: whether it answers (and its high-availability state), and for each subnet how many addresses are left. Counts only, never a lease's address, MAC or host name."
 author: Floorbit
