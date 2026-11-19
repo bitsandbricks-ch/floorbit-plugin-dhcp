@@ -1,21 +1,22 @@
-# The manifest. Floorbit reads it before it runs any code: what the plugin may touch (uses), its
-# settings, and what the agent part may send. Field by field: Floorbit's docs/plugins.md.
-id: example                    # rename: lowercase letters, digits, dashes; the repo is floorbit-plugin-<id>
-name: Example reachability
-icon: network
-version: "0.1.0"
+# The event's DHCP server on the health wall: the server, and how full each subnet is. Off until
+# turned on under Settings > Plugins. It only reads.
+id: dhcp
+name: DHCP (Kea)
+icon: vlan
+version: "1.0.0"
 floorbit: ">=0.1,<2"
-description: "The local agent checks that a few services in the hall answer on their TCP port and the dashboard shows how many do."
+description: "The event's Kea DHCP server on the health wall: whether it answers (and its high-availability state), and for each subnet how many addresses are left. Counts only, never a lease's address, MAC or host name."
 author: Floorbit
-homepage: https://github.com/bitsandbricks-ch/floorbit-plugin-template
-uses: [agent, settings, widgets, storage]
+homepage: https://www.isc.org/kea/
+uses: [settings, http, health]
 settings:
-  - {key: targets, label: Services, type: text, placeholder: "dns = 192.0.2.53:53\ncache = 192.0.2.80:80",
-     help: "One per line: a name = address:port. The agent tries to open a TCP connection to each."}
-  - {key: interval, label: Seconds between checks, type: int, default: 30, min: 5, max: 600}
-widgets:
-  - {id: summary, label: Services up, size: small, refresh: 30}
-agent:
-  sends:
-    # aggregate: counts only. Floorbit and the agent both refuse a payload with an address in it.
-    status: {privacy: aggregate, latest: true}
+  - {key: url, label: Kea API URL, type: url, placeholder: "http://192.0.2.53:8000",
+     help: "The Kea Control Agent (or, from Kea 2.7, the DHCPv4 server's own HTTP control socket)."}
+  - {key: control_agent, label: Through the Control Agent, type: bool, default: true,
+     help: "On: the URL is the Control Agent, which passes commands to the DHCPv4 server. Off: the URL is the DHCPv4 server itself."}
+  - {key: username, label: Username, type: string, help: "Only when the API asks for basic authentication."}
+  - {key: password, label: Password, type: secret}
+  - {key: pool_warn, label: Subnet warning (%), type: int, default: 80,
+     help: "A subnet this full turns amber; at 95% it turns red."}
+  - {key: verify_ssl, label: Verify TLS certificates, type: bool, default: true,
+     help: "Only for an https URL. Turn it off only on a network you trust."}
