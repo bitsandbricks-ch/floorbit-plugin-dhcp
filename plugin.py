@@ -120,8 +120,10 @@ class Plugin(Base):
                        {'label': 'In use', 'value': round(pct), 'unit': '%', 'tone': tone}]
             if r['declined']:
                 metrics.append({'label': 'Declined', 'value': r['declined'], 'tone': 'warn'})
+            # Floorbit forecasts from these when the subnet runs full (floorbit#1061); older ones ignore it.
             checks.append({'id': f"subnet-{r['id']}", 'name': name, 'kind': 'dhcp', 'status': state,
-                           'summary': f"{free} of {r['total']} addresses free", 'metrics': metrics})
+                           'summary': f"{free} of {r['total']} addresses free", 'metrics': metrics,
+                           'capacity': {'used': r['used'], 'total': r['total']}})
         return checks
 
     def _server_check(self, status):
